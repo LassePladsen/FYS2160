@@ -2,14 +2,14 @@
 Created on 30.08.2023
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 # Parameters
 N = 100
 q = 100
 steps = int(1e4)
+
 
 class Single_Oscillator_System:
     def __init__(self, N: int, q: int):
@@ -49,10 +49,11 @@ class Single_Oscillator_System:
         return state_cp
 
     def simulate(self, steps: int) -> np.ndarray[int]:
+        """Runs self.step a given amount fo steps and collects all the states."""
         states = np.zeros((steps, self.N))
         states[0, :] = self.init_state.copy()
-        for i in range(steps-1):
-            states[i+1, :] = self.step(states[i, :])
+        for i in range(steps - 1):
+            states[i + 1, :] = self.step(states[i, :])
         self.steps = steps
         self.states = states
         self.end_state = states[-1, :]
@@ -66,7 +67,7 @@ class Single_Oscillator_System:
         fig = plt.figure()
         oscillators = range(self.N)
 
-        plt.subplot(2,1,1)
+        plt.subplot(2, 1, 1)
         plt.bar(oscillators, self.init_state)
         plt.title("Initial")
 
@@ -85,9 +86,10 @@ class Single_Oscillator_System:
         if show:
             plt.show()
 
+
 class Double_Oscillator_System(Single_Oscillator_System):
     def __init__(self, N_A: int, N_B: int, q: int):
-        super().__init__(N_A+N_B, q)
+        super().__init__(N_A + N_B, q)
         self.N_A = N_A
         self.N_B = N_B
 
@@ -99,8 +101,8 @@ class Double_Oscillator_System(Single_Oscillator_System):
         q_A = np.asarray([np.sum(self.states[i, :self.N_A]) for i in time])
         q_B = np.asarray([np.sum(self.states[i, self.N_B:]) for i in time])
 
-        plt.plot( time, q_A/self.N_A, label="A")
-        plt.plot( time, q_B/self.N_B, label="B")
+        plt.plot(time, q_A / self.N_A, label="A")
+        plt.plot(time, q_B / self.N_B, label="B")
         plt.xlabel("Step/time")
         plt.ylabel("$q_i/N_i$")
         plt.legend()
@@ -112,11 +114,10 @@ class Double_Oscillator_System(Single_Oscillator_System):
             plt.show()
 
 
-
 # Simulate
 # single = Single_Oscillator_System(N, q)
 # single.simulate(steps)
-double = Double_Oscillator_System(N//2, int(np.ceil(N/2)), q)
+double = Double_Oscillator_System(N // 2, int(np.ceil(N / 2)), q)
 double.simulate(steps)
 
 # Plotting
