@@ -10,7 +10,7 @@ time = data[:, 0] / 60
 temp1 = data[:, 1]
 temp2 = data[:, 2]
 
-plt.figure(figsize=(7, 4))
+plt.figure(figsize=(5, 4))
 plt.plot(time, temp1, time, temp2)
 plt.legend(["Bodum thermos", "Temperfect thermos"])
 plt.xlabel("Time [min]")
