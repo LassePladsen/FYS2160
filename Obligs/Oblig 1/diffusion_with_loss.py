@@ -1,11 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Parameters
+# Simulation parameters
 Ctb = 1.96  # Heat capacity ratio top to bottom
 N = 80_000  # Number of heat packets
 nstep = 15 * N  # Number of steps in simulation
+tau_sim = N
 
+# Data plotting parameters
 tau = 150  # Guessing the characteristic time
 
 ### SIMULATION
@@ -15,12 +17,16 @@ Tb = np.zeros(nstep, float)
 Tt[0] = 1  # Initial temperature top
 Tb[0] = -1  # Initial temperature bottom
 Tr = -1  # Room temperature
+dT_t0 = Tt[0] - Tr  # Initial temp diff between block and air
+dT_b0 = Tb[0] - Tr  # Initial temp diff between block and air
 
 for i in range(1, nstep):
-    # Random number between 2 and -2
-    r = 4 * np.random.rand(1, 1) - 2
-    # Temperature difference top to bottom
-    DT = Tt[i - 1] - Tb[i - 1]
+    # Heat loss to air
+    Tt[i] += Tr + np.exp(-i / tau_sim) * dT_t0
+    Tb[i] += Tr + np.exp(-i / tau_sim) * dT_b0
+
+    r = 4 * np.random.rand(1, 1) - 2  # Random number between 2 and -2
+    DT = Tt[i - 1] - Tb[i - 1]  # Temperature difference top to bottom
     if r < DT:
         # Move heat quanta from top to bottom
         Tt[i] = Tt[i - 1] - 1 / N
