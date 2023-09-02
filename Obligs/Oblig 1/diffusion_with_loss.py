@@ -17,14 +17,8 @@ Tb = np.zeros(nstep, float)
 Tt[0] = 1  # Initial temperature top
 Tb[0] = -1  # Initial temperature bottom
 Tr = -1  # Room temperature
-dT_t0 = Tt[0] - Tr  # Initial temp diff between block and air
-dT_b0 = Tb[0] - Tr  # Initial temp diff between block and air
 
 for i in range(1, nstep):
-    # Heat loss to air
-    Tt[i] += Tr + np.exp(-i / tau_sim) * dT_t0
-    Tb[i] += Tr + np.exp(-i / tau_sim) * dT_b0
-
     r = 4 * np.random.rand(1, 1) - 2  # Random number between 2 and -2
     DT = Tt[i - 1] - Tb[i - 1]  # Temperature difference top to bottom
     if r < DT:
@@ -35,6 +29,13 @@ for i in range(1, nstep):
         # Move heat quanta from bottom to top
         Tt[i] = Tt[i - 1] + 1 / N
         Tb[i] = Tb[i - 1] - Ctb / N
+
+    # Heat loss to air
+    loss = np.exp(-i / (N * tau_sim))
+    # print(i/N, loss, Tt[i], Tb[i])
+    Tt[i] *= loss
+    Tb[i] *= loss
+    # print(i/N, loss, Tt[i], Tb[i])
 
 ### EXPERIMENTAL DATA
 D = np.loadtxt('metalblocks_lecture.txt', usecols=[0, 1, 2], unpack=True)
