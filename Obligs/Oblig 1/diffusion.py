@@ -2,11 +2,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Parameters
-Ctb = 1  # Heat capacity ratio top to bottom
-N = 8000  # Number of heat packets
+Ctb = 1.96  # Heat capacity ratio top to bottom
+N = 80_000  # Number of heat packets
 nstep = 15 * N  # Number of steps in simulation
-tau = N  # Time scale (characteristic time)
 
+tau = 150  # Guessing the characteristic time
+
+### SIMULATION
 # Initialize temperature-time arrays
 Tt = np.zeros(nstep, float)
 Tb = np.zeros(nstep, float)
@@ -28,34 +30,58 @@ for i in range(1, nstep):
         Tt[i] = Tt[i - 1] + 1 / N
         Tb[i] = Tb[i - 1] - Ctb / N
 
-# Plot
-plt.figure()
-plt.subplot(2, 1, 1)
-plt.plot(np.arange(0, nstep)/N, Tt, color='r')
-plt.plot(np.arange(0, nstep)/N, Tb, color='k')
-plt.xlabel('steps/N')
-plt.ylabel(r'$2(T-<T_0>)/\Delta T_0$')
-plt.legend(['Temperature top', 'Temperature bottom'])
-
-
-D = np.loadtxt('metalblocks_lecture.txt', usecols = [0, 1, 2], unpack = True)
-# Guessing the characteristic time
-tau = 100
-# Dimensionless time
-t = D[0,:] / tau
-T1 = D[1,:]
-T2 = D[2,:]
+### EXPERIMENTAL DATA
+D = np.loadtxt('metalblocks_lecture.txt', usecols=[0, 1, 2], unpack=True)
+t = D[0, :] / tau  # Dimensionless time
+T1 = D[1, :]
+T2 = D[2, :]
 T10 = np.mean(T1[70:91])
 T20 = np.mean(T2[70:91])
 DT0 = T20 - T10
 Tmean0 = (T20 + T10) / 2
 
-# Plot rescaled temperature versus rescaled time
-plt.subplot(2, 1, 2)
-plt.plot(t, 2 * (T1 - Tmean0) / DT0, color = 'k')
-plt.plot(t, 2 * (T2 - Tmean0) / DT0, color = 'r')
-plt.axis([0, 15, -1.0, 1.01])
+
+# Plotting config
+xmin = 0
+xmax = 12.1
+x_ticks_maj = np.arange(xmin, xmax, 1)
+x_ticks_min = np.arange(xmin, xmax, 0.5)
+ymin = -1
+ymax = 1.01
+y_ticks_maj = np.arange(ymin, ymax, 0.5)
+y_ticks_min = np.arange(ymin, ymax, 0.25)
+
+# Plot data, rescaled temperature versus rescaled time
+fig = plt.figure(figsize=(5, 5))
+fig.suptitle(rf"Ctb = {Ctb}, $\tau$ = {tau}")
+plt.subplot(2, 1, 1)
+plt.title("Experimental data")
+plt.plot(t, 2 * (T1 - Tmean0) / DT0, color='k')
+plt.plot(t, 2 * (T2 - Tmean0) / DT0, color='r')
+plt.axis([xmin, xmax, ymin, ymax])
 plt.xlabel(r'$t/\tau$')
 plt.ylabel(r'$2(T-<T_0>)/\Delta T_0$')
-plt.legend(['Temperature top','Temperature bottom'])
+plt.legend(['Temperature top', 'Temperature bottom'])
+plt.xticks(x_ticks_maj)
+plt.xticks(x_ticks_min, minor=True)
+plt.yticks(y_ticks_maj)
+plt.yticks(y_ticks_min, minor=True)
+plt.grid(which="both")
+
+# Plot simulation
+plt.subplot(2, 1, 2)
+plt.title("Simulation")
+plt.plot(np.arange(0, nstep) / N, Tt, color='r')
+plt.plot(np.arange(0, nstep) / N, Tb, color='k')
+plt.xlabel('steps/N')
+plt.ylabel(r'$2(T-<T_0>)/\Delta T_0$')
+plt.axis([xmin, xmax, ymin, ymax])
+plt.legend(['Temperature top', 'Temperature bottom'])
+plt.xticks(x_ticks_maj)
+plt.xticks(x_ticks_min, minor=True)
+plt.yticks(y_ticks_maj)
+plt.yticks(y_ticks_min, minor=True)
+plt.grid(which="both")
+
+plt.tight_layout()
 plt.savefig("figures/diffusion_simulation.png")
