@@ -3,7 +3,7 @@ import numpy as np
 
 # Simulation parameters
 Ctb = 1.96  # Heat capacity ratio top to bottom
-Cr = 1/25  # Heat loss coefficient
+C_loss = 1/25  # Heat loss coefficient
 N = 100_000  # Number of heat packets
 nstep = 15 * N  # Number of steps in simulation
 
@@ -37,9 +37,9 @@ for i in range(1, nstep):
     DTb = Tb[i] - Tr  # Temperature difference bot to room
     if rt < DTt:
         # Subtract one heat quanta multiplied by heat loss coefficient
-        Tt[i] -= Cr / N
+        Tt[i] -= C_loss / N
     if rb < DTb:
-        Tb[i] -= Cr / N
+        Tb[i] -= C_loss / N
 
 ### EXPERIMENTAL DATA
 D = np.loadtxt('metalblocks_lecture.txt', usecols=[0, 1, 2], unpack=True)
