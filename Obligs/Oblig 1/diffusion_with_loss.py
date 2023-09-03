@@ -3,9 +3,9 @@ import numpy as np
 
 # Simulation parameters
 Ctb = 1.96  # Heat capacity ratio top to bottom
-N = 80_000  # Number of heat packets
+Cr = 1/25  # Heat loss coefficient
+N = 100_000  # Number of heat packets
 nstep = 15 * N  # Number of steps in simulation
-tau_sim = N
 
 # Data plotting parameters
 tau = 150  # Guessing the characteristic time
@@ -30,12 +30,16 @@ for i in range(1, nstep):
         Tt[i] = Tt[i - 1] + 1 / N
         Tb[i] = Tb[i - 1] - Ctb / N
 
-    # Heat loss to air
-    loss = np.exp(-i / (N * tau_sim))
-    # print(i/N, loss, Tt[i], Tb[i])
-    Tt[i] *= loss
-    Tb[i] *= loss
-    # print(i/N, loss, Tt[i], Tb[i])
+    # Randomized heat loss to air in the same fashion as the above diffusion
+    rt = 4 * np.random.rand(1, 1) - 2  # Random number between 2 and -2
+    rb = 4 * np.random.rand(1, 1) - 2
+    DTt = Tt[i] - Tr  # Temperature difference top to room
+    DTb = Tb[i] - Tr  # Temperature difference bot to room
+    if rt < DTt:
+        # Subtract one heat quanta multiplied by heat loss coefficient
+        Tt[i] -= Cr / N
+    if rb < DTb:
+        Tb[i] -= Cr / N
 
 ### EXPERIMENTAL DATA
 D = np.loadtxt('metalblocks_lecture.txt', usecols=[0, 1, 2], unpack=True)
