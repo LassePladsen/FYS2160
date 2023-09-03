@@ -67,7 +67,7 @@ y_ticks_min = np.arange(ymin, ymax, 0.25)
 
 # Plot data, rescaled temperature versus rescaled time
 fig = plt.figure(figsize=(5, 5))
-fig.suptitle(rf"Ctb = {Ctb}, $\tau$ = {tau}")
+fig.suptitle(rf"Ctb = {Ctb}, $\tau$ = {tau}$, $C_$loss = {C_loss}$")
 plt.subplot(2, 1, 1)
 plt.title("Experimental data")
 plt.plot(t, 2 * (T1 - Tmean0) / DT0, color='k')
