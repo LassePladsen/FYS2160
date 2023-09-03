@@ -30,14 +30,17 @@ for i in range(1, nstep):
         Tt[i] = Tt[i - 1] + 1 / N
         Tb[i] = Tb[i - 1] - Ctb / N
 
-    # Randomized heat loss to air in the same fashion as the above diffusion
+    # Randomized heat loss to air in the same fashion as the above diffusion:
+    # heat loss top
     rt = 4 * np.random.rand(1, 1) - 2  # Random number between 2 and -2
-    rb = 4 * np.random.rand(1, 1) - 2
     DTt = Tt[i] - Tr  # Temperature difference top to room
-    DTb = Tb[i] - Tr  # Temperature difference bot to room
     if rt < DTt:
         # Subtract one heat quanta multiplied by heat loss coefficient
         Tt[i] -= C_loss / N
+
+    # heat loss bottom
+    rb = 4 * np.random.rand(1, 1) - 2
+    DTb = Tb[i] - Tr  # Temperature difference bot to room
     if rb < DTb:
         Tb[i] -= C_loss / N
 
