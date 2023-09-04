@@ -3,7 +3,7 @@ import numpy as np
 
 # Simulation parameters
 Ctb = 1.96  # Heat capacity ratio top to bottom
-C_loss = 1/25  # Heat loss coefficient
+C_loss = 1/18  # Heat loss coefficient
 N = 100_000  # Number of heat packets
 nstep = 15 * N  # Number of steps in simulation
 
@@ -32,14 +32,14 @@ for i in range(1, nstep):
 
     # Randomized heat loss to air in the same fashion as the above diffusion:
     # heat loss top
-    rt = 4 * np.random.rand(1, 1) - 2  # Random number between 2 and -2
+    rt = np.random.uniform(0, 2)  # Random number between 0 and 2
     DTt = Tt[i] - Tr  # Temperature difference top to room
     if rt < DTt:
         # Subtract one heat quanta multiplied by heat loss coefficient
         Tt[i] -= C_loss / N
 
     # heat loss bottom
-    rb = 4 * np.random.rand(1, 1) - 2
+    rb = np.random.uniform(0, 2)  # Random number between 0 and 2
     DTb = Tb[i] - Tr  # Temperature difference bot to room
     if rb < DTb:
         Tb[i] -= C_loss / N
