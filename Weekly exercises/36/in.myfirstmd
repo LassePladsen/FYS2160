@@ -1,0 +1,35 @@
+units lj
+boundary p p p
+atom_style atomic
+
+
+# Define the space and put atoms in
+dimension 2
+region simbox block 0 30 0 30 -0.1 0.1
+create_box 1 simbox
+lattice hex 0.65
+create_atoms 1 box
+
+# Define properties of the atoms
+mass 1 1.0
+velocity all create 0.6 87287
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+# Speed up simulation with neighbour lists
+neighbor 0.3 bin
+neigh_modify every 20 delay 0 check yes
+
+# Define thermodynamic ensemble
+fix 1 all nvt temp 0.3 0.4 0.6
+
+# Define trajectory file name and content...
+dump 1 all custom 10 dump.lammpstrj id type x y vx vy
+
+# Define thermodynamic data file (log.lammps)
+thermo_style custom time pe ke temp press 
+thermo 100
+
+# run simulation + number of steps
+timestep 0.003
+run 10000
