@@ -1,13 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Simulation parameters
+# SIMULATION PARAMETERS
 Ctb = 5  # Heat capacity ratio top to bottom
 C_loss = 1/18  # Heat loss coefficient
-N = 10_000  # Number of heat packets
-nstep = 100 * N  # Number of steps in simulation
-T_bm = 0.5  # melting temperature for bottom part
-L_b = nstep / N * 5   # latent heat for bottom (amount of steps to simulate phase-change)
+N = 80_000  # Number of heat packets
+nstep = 50 * N  # Number of steps in simulation
+T_bm = 0.4  # melting temperature for bottom part
+L_b = 0.6 * N   # latent heat for bottom, simulating phase-change
 
 # PLOT TEMPERFECT EXPERIMENT
 data = np.genfromtxt("termokopper_data.txt")
@@ -23,15 +23,15 @@ plt.title("Experiment")
 plt.xlabel("Time [min]")
 plt.ylabel("Water temperature $T_w$ [°C]")
 
-# Grid ticks
+# Data grid ticks
 xmin = 0
 xmax = 116
-plt.xticks(range(xmin, xmax, 10))
-plt.xticks(range(xmin, xmax, 5), minor=True)
+plt.xticks(np.arange(xmin, xmax, 10))
+plt.xticks(np.arange(xmin, xmax, 5), minor=True)
 ymin = 20
 ymax = 91
-plt.yticks(range(ymin, ymax, 10))
-plt.yticks(range(ymin, ymax, 5), minor=True)
+plt.yticks(np.arange(ymin, ymax, 10))
+plt.yticks(np.arange(ymin, ymax, 5), minor=True)
 plt.grid(which="both")
 
 
@@ -136,8 +136,8 @@ for i in range(1, nstep):
     heat_loss_bot(i)
 
 
-# Grid ticks
-xmin = 0
+# Simulation grid ticks
+xmin = -2
 xmax = nstep/N + 0.1
 x_ticks_maj = np.arange(xmin, xmax, 2.5)
 x_ticks_min = np.arange(xmin, xmax, 2.5/2)
@@ -163,3 +163,4 @@ plt.grid(which="both")
 
 plt.tight_layout()
 plt.savefig("figures/temperfect_simulation.png")
+# plt.show()
