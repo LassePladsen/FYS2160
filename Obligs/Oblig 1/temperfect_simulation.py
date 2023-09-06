@@ -4,7 +4,7 @@ import numpy as np
 # SIMULATION PARAMETERS
 Ctb = 5  # Heat capacity ratio top to bottom
 C_loss = 1/18  # Heat loss coefficient
-N = 80_000  # Number of heat packets
+N = 100_000  # Number of heat packets
 nstep = 50 * N  # Number of steps in simulation
 T_bm = 0.4  # melting temperature for bottom part
 L_b = 0.6 * N   # latent heat for bottom, simulating phase-change
@@ -137,10 +137,10 @@ for i in range(1, nstep):
 
 
 # Simulation grid ticks
-xmin = -2
+xmin = 0
 xmax = nstep/N + 0.1
-x_ticks_maj = np.arange(xmin, xmax, 2.5)
-x_ticks_min = np.arange(xmin, xmax, 2.5/2)
+x_ticks_maj = np.arange(xmin, xmax, 5)
+x_ticks_min = np.arange(xmin, xmax, 2.5)
 ymin = -1
 ymax = 1.01
 y_ticks_maj = np.arange(ymin, ymax, 0.5)
@@ -153,12 +153,12 @@ plt.plot(np.arange(0, nstep) / N, Tb, color="r", label="Temperature bot")
 plt.plot(np.arange(0, nstep) / N, Tt, color="k", label="Temperature top")
 plt.xlabel('steps/N')
 plt.ylabel(r'$2(T-<T_0>)/\Delta T_0$')
-plt.axis([xmin, xmax, ymin, ymax])
+plt.axis([xmin-2, xmax, ymin, ymax])
 plt.legend()
-# plt.xticks(x_ticks_maj)
-# plt.xticks(x_ticks_min, minor=True)
-# plt.yticks(y_ticks_maj)
-# plt.yticks(y_ticks_min, minor=True)
+plt.xticks(x_ticks_maj)
+plt.xticks(x_ticks_min, minor=True)
+plt.yticks(y_ticks_maj)
+plt.yticks(y_ticks_min, minor=True)
 plt.grid(which="both")
 
 plt.tight_layout()
