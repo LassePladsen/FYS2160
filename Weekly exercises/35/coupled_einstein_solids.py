@@ -51,7 +51,7 @@ class Coupled_Einstein_Solids:
 
     def probability_plot(self, show=True, savefig=False):
         P_list = []
-        q_A_list = list(range(0, q + 1))
+        q_A_list = list(range(0, self.q + 1))
         for q_A in q_A_list:
             P_list.append(self.probability(q_A) * 100)
 
