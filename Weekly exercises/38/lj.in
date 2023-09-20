@@ -1,6 +1,6 @@
 # Define variables
 # Starting temperature:
-variable T equal 1
+variable T equal 1.4
 # Number of particles:
 variable N equal 1024
 # Density:
