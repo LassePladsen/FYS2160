@@ -1,0 +1,51 @@
+# Define variables
+# Length of sides of cubic box
+variable L equal 5
+# Temperature:
+variable T equal 1
+# Density:
+variable rho equal 0.001
+# Pressure:
+variable P equal 0.01
+# Set Pconst=1 for pressure constant, Pconst=0 for volume constant
+variable Pconst equal 0
+
+units lj
+dimension 3
+lattice fcc ${rho}
+region simbox block 0 $L 0 $L 0 $L
+create_box 1 simbox
+create_atoms 1 box
+
+mass 1 1.0
+velocity all create $T 87287
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+
+if "${Pconst} == 0" then &
+"fix nvt all nvt temp $T $T 1" &
+else &
+"fix npt all npt temp $T $T 1 iso $P $P 1"
+neigh_modify every 1 delay 0 check yes
+
+
+#Thermalization run
+run 1000
+
+if "${Pconst} == 0" then &
+"unfix nvt" &
+"fix nve all nve" &
+else &
+"unfix npt" &
+"fix nph all nph iso $P $P 1"
+
+#Start heat addition and run to stabilize
+variable eFlux equal 1
+fix heat all heat 1 ${eFlux} region simbox
+run 1000
+
+#Define new thermodynamic output and trajectory dump and start production run
+thermo_style custom step temp epair etotal press
+thermo 100
+dump 1 all custom 100 dump.lammpstrj id x y z vx vy vz
+run 100000
