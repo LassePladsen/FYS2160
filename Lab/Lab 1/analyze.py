@@ -12,7 +12,6 @@ from scipy.stats import linregress
 if __name__ == "__main__":
     # Constants
     rho = 0.001
-    k = 1.380649e-23  # m^2 kg s^-2 K^-1
 
     log = lmplog.File(argv[1])
 
@@ -57,7 +56,7 @@ if __name__ == "__main__":
     plt.plot(T, y_Z, label="Regression", ms=2)
     plt.legend()
     plt.xlabel("T*")
-    plt.ylabel(r"$Z=P^*/(\rho^* T^*)$")
+    plt.ylabel("Z")
     plt.savefig("Z(T).png")
 
     # Save prints to output file
