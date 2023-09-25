@@ -20,6 +20,7 @@ outfiles.append(outfiles.pop(1))
 rho_vals = np.genfromtxt("task3_infiles/rho_vals.txt")
 
 Z_vals = np.zeros(len(rho_vals))
+Cv_vals = np.zeros_like(Z_vals)
 
 # Analyze each one, then plot Cv(T) and Z(rho)
 # First plot Cv(t)
@@ -38,12 +39,16 @@ for file, rho in zip(outfiles, rho_vals):
     reg = linregress(T, U)
     y = reg.slope * T + reg.intercept
 
-    # Plot regression
+    # Plot U regression
     rho_index = file.name.split("_")[-1]
     plt.plot(T, y, label=f"{rho_index}={rho}", ms=2)
 
-    # Save mean Z value
+    # Save mean Z values
     Z_vals[i] = np.mean(P / (rho * T))
+
+    # Save C_v (slope) values
+    Cv_vals[i] = reg.slope
+
     i += 1
 
 plt.legend(frameon=False)
@@ -58,3 +63,10 @@ plt.plot(rho_vals, Z_vals, "o-")
 plt.xlabel(r"$\rho^*$")
 plt.ylabel("Z")
 plt.savefig("Z(rho).png")
+
+# Lastly plot C_V(rho)
+plt.figure(figsize=figsize)
+plt.plot(rho_vals, Cv_vals, "o-")
+plt.xlabel(r"$\rho^*$")
+plt.ylabel("$C_V$ [J/K]")
+plt.savefig("C_V(rho).png")

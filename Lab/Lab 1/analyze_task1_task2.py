@@ -61,6 +61,6 @@ if __name__ == "__main__":
 
     # Save prints to output file
     with open("analyze.txt", "w") as file:
-        file.write(f"C_v = ({Cv:.4e} ± {dCv:.4e})\n")
-        file.write(f"f = ({f} ± {df})\n")
-        file.write(f"Z_mean = ({Z:.4e} ± {dZ:.4e})\n")
+        file.write(f"C_v = ({Cv:.7f} ± {dCv:.7f})\n")
+        file.write(f"f = ({f:.7f} ± {df:.7f})\n")
+        file.write(f"Z_mean = ({Z:.7f} ± {dZ:.7f})\n")
