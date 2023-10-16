@@ -1,0 +1,40 @@
+## Set temperature
+variable T equal 251
+
+units real
+atom_style full
+
+read_restart restart.250K
+
+include forcefield.SPCE
+pair_modify tail no
+
+group hydrogen type 1
+group oxygen type 2
+
+neighbor 2.0 bin
+neigh_modify every 10 delay 0 check yes
+
+timestep 2.0
+
+fix constrain all shake 1.0e-4 100 0 b 1 a 1
+
+####### Change size of simulation cell 
+#fix 2 all deform 1 x scale 10 y scale 10 z scale 10
+#### Choose one of the two: NVT or NPT #####
+####### NVT: Run simulation at constant volume and temperature
+fix integrate all nvt temp $T $T 200.0
+####### NPT: Run simulation at constant pressure and temperature
+#fix 1 all npt temp $T $T 300.0 iso 1.0 1.0 1000.0
+
+
+
+# Thermodynamic output
+thermo_style custom step temp etotal enthalpy
+thermo 100
+
+# Trajectory output
+dump trj all atom 100 ice_$TK.lammpstrj
+
+run 10000
+write_restart restart.$TK
