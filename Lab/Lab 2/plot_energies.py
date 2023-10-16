@@ -4,16 +4,17 @@ Created on 16.10.2023
 
 import numpy as np
 import matplotlib.pyplot as plt
+import lammps_logfile
 
 # Input file
-file = "300K_simulation_log.txt"
+file = "simulation/log400K.lammps"
 
 # Plot energies E_tot and H
-data = np.genfromtxt(file, skip_header=True)
-toteng = data[:, 2]
-enthalpy = data[:, 3]
+log = lammps_logfile.File(file)
+enthalpy = log.get("Enthalpy")
+toteng = log.get("TotEng")
 step = np.arange(0, len(toteng)*100, 100)
-T = int(file.split("_")[0].rstrip("K"))
+T = int(file.split(".")[0][-4:-1])
 
 fig, axs = plt.subplots(1, 2)
 fig.suptitle(f"Simulation energy plots at {T=}K")

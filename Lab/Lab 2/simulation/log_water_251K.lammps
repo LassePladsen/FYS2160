@@ -1,0 +1,270 @@
+LAMMPS (2 Aug 2023 - Maintenance - lammps-gui-v1.2)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (src/comm.cpp:98)
+  using 1 OpenMP thread(s) per MPI task
+Loaded 1 plugins from C:\Users\lasse\AppData\Local\LAMMPS 64-bit 2Aug2023 with GUI\plugins
+## Set temperature
+variable T equal 251
+
+units real
+atom_style full
+
+read_restart restart.250K
+Reading restart file ...
+  restart file = 29 Oct 2020, LAMMPS = 2 Aug 2023
+WARNING: Old restart file format revision. Switching to compatibility mode. (src/read_restart.cpp:616)
+  restoring atom style full from restart
+  orthogonal box = (-22.461251 -23.3424 -22.007429) to (22.461251 23.3424 22.007429)
+  1 by 1 by 1 MPI processor grid
+  restoring pair style lj/cut/coul/long from restart
+  restoring bond style harmonic from restart
+  restoring angle style harmonic from restart
+  8640 atoms
+  5760 bonds
+  2880 angles
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        0       
+  special bond factors coul:  0        0        0       
+     2 = max # of 1-2 neighbors
+     1 = max # of 1-3 neighbors
+     1 = max # of 1-4 neighbors
+     2 = max # of special neighbors
+  special bonds CPU = 0.007 seconds
+  read_restart CPU = 0.023 seconds
+
+include forcefield.SPCE
+# Original model from Berendsen et al, J Phys Chem 91:6269 (1987)
+# Charges and geometry are specified in the "data." file.
+
+mass 1 1.00794 # H
+mass 2 15.9994 # O
+
+pair_style lj/cut/coul/long 10.0
+pair_modify tail yes
+kspace_style pppm 1.0e-5
+
+pair_coeff 1 1 0.00000 0.000
+pair_coeff 1 2 0.00000 0.000
+pair_coeff 2 2 0.15535 3.166
+
+bond_style harmonic
+bond_coeff 1 0.0 1.0
+
+angle_style harmonic
+angle_coeff 1 0.0 109.47
+
+pair_modify tail no
+
+group hydrogen type 1
+5760 atoms in group hydrogen
+group oxygen type 2
+2880 atoms in group oxygen
+
+neighbor 2.0 bin
+neigh_modify every 10 delay 0 check yes
+
+timestep 2.0
+
+fix constrain all shake 1.0e-4 100 0 b 1 a 1
+Finding SHAKE clusters ...
+       0 = # of size 2 clusters
+       0 = # of size 3 clusters
+       0 = # of size 4 clusters
+    2880 = # of frozen angles
+  find clusters CPU = 0.004 seconds
+
+####### Change size of simulation cell
+#fix 2 all deform 1 x scale 10 y scale 10 z scale 10
+#### Choose one of the two: NVT or NPT #####
+####### NVT: Run simulation at constant volume and temperature
+fix integrate all nvt temp $T $T 200.0
+fix integrate all nvt temp 251 $T 200.0
+fix integrate all nvt temp 251 251 200.0
+Resetting global fix info from restart file:
+  fix style: nvt, fix ID: integrate
+####### NPT: Run simulation at constant pressure and temperature
+#fix 1 all npt temp $T $T 300.0 iso 1.0 1.0 1000.0
+
+
+
+# Thermodynamic output
+thermo_style custom step temp etotal enthalpy
+thermo 100
+
+# Trajectory output
+dump trj all atom 100 ice_$TK.lammpstrj
+dump trj all atom 100 ice_251K.lammpstrj
+
+run 10000
+PPPM initialization ...
+  using 12-bit tables for long-range coulomb (src/kspace.cpp:342)
+  G vector (1/distance) = 0.30304907
+  grid = 40 40 36
+  stencil order = 5
+  estimated absolute RMS force accuracy = 0.0033507515
+  estimated relative force accuracy = 1.0090689e-05
+  using double precision FFTW3
+  3d grid and FFT values/proc = 94987 57600
+Generated 0 of 1 mixed pair_coeff terms from geometric mixing rule
+All restart file global fix info was re-assigned
+Unused restart file peratom fix info:
+  fix style: STORE, fix ID: cO_COMPUTE_STORE
+  fix style: STORE, fix ID: cH_COMPUTE_STORE
+  fix style: STORE, fix ID: A_COMPUTE_STORE
+Neighbor list info ...
+  update: every = 10 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 12
+  ghost atom cutoff = 12
+  binsize = 6, bins = 8 8 8
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut/coul/long, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 36.08 | 36.08 | 36.08 Mbytes
+   Step          Temp          TotEng        Enthalpy   
+    100000   244.89486     -32608.769     -33102.917    
+    100100   247.77369     -32544.271     -32946.652    
+    100200   250.81396     -32516.09      -32876.518    
+    100300   250.99437     -32466.305     -32517.422    
+    100400   252.52615     -32413.763     -32613.374    
+    100500   252.66284     -32357.406     -32658.706    
+    100600   250.14853     -32338.52      -32538.684    
+    100700   249.56777     -32456.436     -32994.811    
+    100800   252.01514     -32523.261     -32992.361    
+    100900   247.08787     -32549.69      -33292.973    
+    101000   253.10808     -32486.605     -32891.994    
+    101100   251.37548     -32391.09      -32616.612    
+    101200   255.37404     -32325.697     -32338.853    
+    101300   255.12425     -32374.526     -32935.203    
+    101400   252.06173     -32414.456     -32796.51     
+    101500   252.35809     -32479.144     -32848.503    
+    101600   250.30203     -32532.301     -33027.02     
+    101700   249.30687     -32543.793     -33033.88     
+    101800   251.32949     -32410.832     -32652.252    
+    101900   251.50347     -32357.402     -32434.576    
+    102000   249.52681     -32417.654     -33214.432    
+    102100   249.44885     -32467.536     -32728.215    
+    102200   248.75503     -32533.741     -33149.944    
+    102300   252.2462      -32562.773     -33133.692    
+    102400   253.59819     -32487.68      -33022.095    
+    102500   252.94921     -32393.088     -32680.468    
+    102600   254.04734     -32381.998     -32822.669    
+    102700   254.9298      -32450.855     -33231.037    
+    102800   248.68982     -32535.79      -33099.839    
+    102900   245.10856     -32588.905     -32957.667    
+    103000   249.97649     -32466.126     -32780.571    
+    103100   251.97894     -32376.169     -32779.318    
+    103200   254.82581     -32380.636     -32894.693    
+    103300   246.43953     -32468.406     -32829.728    
+    103400   250.56696     -32518.704     -32866.032    
+    103500   247.2272      -32522.936     -32882.687    
+    103600   254.82596     -32417.471     -32596.089    
+    103700   250.81191     -32349.006     -32646.416    
+    103800   249.17511     -32388.502     -32618.09     
+    103900   252.60205     -32436.528     -32914.14     
+    104000   252.40976     -32459.137     -33014.891    
+    104100   250.73947     -32472.581     -32826.071    
+    104200   251.78168     -32478.813     -32983.163    
+    104300   248.14825     -32492.726     -33055.932    
+    104400   246.85467     -32492.007     -32725.712    
+    104500   249.53633     -32455.136     -32872.297    
+    104600   253.98955     -32393.764     -32785.572    
+    104700   255.00278     -32376.28      -32668.247    
+    104800   252.73946     -32461.807     -32974.153    
+    104900   250.0472      -32534.526     -33091.624    
+    105000   250.02412     -32522.165     -33104.937    
+    105100   248.20677     -32500.29      -32834.284    
+    105200   252.13479     -32474.061     -32926.762    
+    105300   251.25086     -32438.365     -33005.209    
+    105400   254.50443     -32363.574     -32668.709    
+    105500   256.7363      -32267.008     -32791.387    
+    105600   256.21912     -32275.745     -32284.362    
+    105700   251.0388      -32401.094     -32780.316    
+    105800   252.28523     -32463.467     -33046.36     
+    105900   248.52111     -32521.576     -33140.247    
+    106000   251.64261     -32531.243     -33352.019    
+    106100   254.80234     -32436.27      -33121.244    
+    106200   255.55146     -32357.178     -32845.289    
+    106300   253.90582     -32383.718     -32880.078    
+    106400   252.13403     -32426.377     -33238.635    
+    106500   252.17389     -32449.852     -32860.876    
+    106600   251.65776     -32489.4       -32954.395    
+    106700   251.06368     -32554.128     -33020.489    
+    106800   244.12171     -32641.618     -33545.37     
+    106900   251.41701     -32552.867     -32911.519    
+    107000   251.5916      -32480.841     -33030.827    
+    107100   248.48262     -32439.541     -33217.121    
+    107200   249.08013     -32394.854     -32637.074    
+    107300   251.86922     -32403.99      -32854.259    
+    107400   249.62692     -32533.937     -33100.4      
+    107500   249.91169     -32563.13      -33288.285    
+    107600   249.05758     -32512.54      -33041.182    
+    107700   251.96222     -32424.232     -32994.11     
+    107800   252.9232      -32389.586     -32859.856    
+    107900   251.30315     -32409.451     -32734.727    
+    108000   252.19417     -32440.095     -32847.518    
+    108100   247.44472     -32488.09      -33101.933    
+    108200   249.7664      -32509.634     -33064.793    
+    108300   249.08671     -32537.556     -32805.489    
+    108400   247.50957     -32546.657     -33305.109    
+    108500   249.7692      -32466.145     -33015.808    
+    108600   251.58607     -32384.092     -32935.111    
+    108700   252.40476     -32383.675     -32662.683    
+    108800   249.88909     -32454.656     -33157.601    
+    108900   252.36164     -32481.287     -33109.887    
+    109000   252.10131     -32461.103     -33369.17     
+    109100   252.06977     -32449.266     -32890.149    
+    109200   251.08818     -32475.659     -33168.297    
+    109300   249.98007     -32522.867     -33158.284    
+    109400   252.03354     -32591.291     -33288.65     
+    109500   248.84864     -32573.47      -33416.88     
+    109600   255.4013      -32452.935     -33003.954    
+    109700   252.86722     -32438.131     -32789.838    
+    109800   250.30629     -32463.525     -33437.054    
+    109900   253.28808     -32473.601     -33105.021    
+    110000   246.04437     -32508.606     -32909.757    
+Loop time of 1032.03 on 1 procs for 10000 steps with 8640 atoms
+
+Performance: 1.674 ns/day, 14.334 hours/ns, 9.690 timesteps/s, 83.719 katom-step/s
+88.0% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 779.89     | 779.89     | 779.89     |   0.0 | 75.57
+Bond    | 0.01573    | 0.01573    | 0.01573    |   0.0 |  0.00
+Kspace  | 177.98     | 177.98     | 177.98     |   0.0 | 17.25
+Neigh   | 53.285     | 53.285     | 53.285     |   0.0 |  5.16
+Comm    | 2.5881     | 2.5881     | 2.5881     |   0.0 |  0.25
+Output  | 3.0102     | 3.0102     | 3.0102     |   0.0 |  0.29
+Modify  | 13.966     | 13.966     | 13.966     |   0.0 |  1.35
+Other   |            | 1.3        |            |       |  0.13
+
+Nlocal:           8640 ave        8640 max        8640 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:          22829 ave       22829 max       22829 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    2.93153e+06 ave 2.93153e+06 max 2.93153e+06 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 2931528
+Ave neighs/atom = 339.29722
+Ave special neighs/atom = 2
+Neighbor list builds = 478
+Dangerous builds = 36
+write_restart restart.$TK
+write_restart restart.251K
+System init for write_restart ...
+PPPM initialization ...
+  using 12-bit tables for long-range coulomb (src/kspace.cpp:342)
+  G vector (1/distance) = 0.30304907
+  grid = 40 40 36
+  stencil order = 5
+  estimated absolute RMS force accuracy = 0.0033507515
+  estimated relative force accuracy = 1.0090689e-05
+  using double precision FFTW3
+  3d grid and FFT values/proc = 94987 57600
+Generated 0 of 1 mixed pair_coeff terms from geometric mixing rule
+Total wall time: 0:17:12
